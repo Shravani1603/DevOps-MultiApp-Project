@@ -18,7 +18,7 @@ spec:
       - name: app1
         image: zorothehunter/app1
         ports:
-        - containerPort: 80
+        - containerPort: 5000
 
 ---
 apiVersion: v1
@@ -30,5 +30,5 @@ spec:
     app: app1
   ports:
     - port: 80
-      targetPort: 80
+      targetPort: 5000
   type: ClusterIP
