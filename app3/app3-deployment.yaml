@@ -15,7 +15,7 @@ spec:
         app: app3
     spec:
       containers:
-      - name: app3
+      - name: /
         image: zorothehunter/app3
         ports:
         - containerPort: 5002
