@@ -5,4 +5,4 @@ FROM nginx:alpine
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copy static HTML content
-COPY index.html /usr/share/nginx/html/index.html
+COPY index.html /usr/share/nginx/html/app/index.html
