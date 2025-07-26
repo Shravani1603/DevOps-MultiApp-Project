@@ -14,7 +14,7 @@ pipeline {
 
     stage('Clone Repository') {
       steps {
-        git 'https://github.com/Shravani1603/DevOps-MultiApp-Project.git'
+        git branch: 'main', url: 'https://github.com/Shravani1603/DevOps-MultiApp-Project.git'
       }
     }
 
