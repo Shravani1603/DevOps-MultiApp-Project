@@ -8,6 +8,8 @@ pipeline {
   environment {
     DOCKER_IMAGE = "zorothehunter/${params.APP_NAME}"
     K8S_NAMESPACE = "default"
+    AWS_REGION = "ap-south-1"
+    EKS_CLUSTER = "devops-cluster"
   }
 
   stages {
@@ -29,17 +31,24 @@ pipeline {
     stage('Push to Docker Hub') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-          sh """
+          sh '''
             echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-            docker push ${DOCKER_IMAGE}
-          """
+            docker push $DOCKER_IMAGE
+          '''
         }
       }
     }
 
     stage('Deploy to Kubernetes') {
       steps {
-        sh "kubectl apply -f ${params.APP_NAME}/${params.APP_NAME}-deployment.yaml -n ${K8S_NAMESPACE}"
+        withEnv(["AWS_DEFAULT_REGION=${env.AWS_REGION}"]) {
+          withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-creds']]) {
+            sh '''
+              aws eks update-kubeconfig --name $EKS_CLUSTER
+              kubectl apply -f ${APP_NAME}/${APP_NAME}-deployment.yaml -n $K8S_NAMESPACE
+            '''
+          }
+        }
       }
     }
   }
